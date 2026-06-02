@@ -1,0 +1,35 @@
+import streamlit as st
+import torch
+from transformers import BertTokenizer, BertForSequenceClassification
+
+model = BertForSequenceClassification.from_pretrained("phishing_model")
+tokenizer = BertTokenizer.from_pretrained("phishing_model")
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model.to(device)
+
+st.title("Phishing Email Detection using BERT")
+
+email = st.text_area("Enter Email Content")
+
+if st.button("Detect"):
+
+    inputs = tokenizer(
+        email,
+        return_tensors="pt",
+        truncation=True,
+        padding=True,
+        max_length=128
+    )
+
+    inputs = {k: v.to(device) for k, v in inputs.items()}
+
+    with torch.no_grad():
+        outputs = model(**inputs)
+
+    pred = torch.argmax(outputs.logits, dim=1).item()
+
+    if pred == 1:
+        st.error("⚠️ Phishing Email Detected")
+    else:
+        st.success("✅ Legitimate Email")
