@@ -1,6 +1,7 @@
 import streamlit as st
 import torch
 from transformers import BertTokenizer, BertForSequenceClassification
+from url_analyzer import analyze_urls
 
 # Page configuration
 st.set_page_config(
