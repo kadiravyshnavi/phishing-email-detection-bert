@@ -28,6 +28,7 @@ model, tokenizer = load_model()
 
 # Title
 st.title("🛡️ Phishing Email Detection Using BERT")
+st.write("VERSION 2.0 - URL Intelligence Enabled")
 st.write(
     "Enter an email message below and the model will predict whether it is "
     "a phishing email or a legitimate email."
