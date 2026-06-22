@@ -80,8 +80,12 @@ if st.button("Detect Email"):
             st.success(
             f"✅ Legitimate Email\n\n"
             f"Confidence: {confidence:.2f}%\n\n"
-            f"Risk Level: {risk_level}"
-)
+            f"Risk Level: {risk_level}")
+        url_findings = analyze_urls(email_text)
+        if url_findings:
+            st.subheader("🔍 URL Analysis")
+            for finding in url_findings:
+                st.warning(finding)
 
 # Footer
 st.markdown("---")
