@@ -86,6 +86,11 @@ if st.button("Detect Email"):
         threats = analyze_threats(email_text)
         if threats:
             st.subheader("🚨 Threat Analysis")
+            st.write("DEBUG")
+            st.write(risk_score)
+            st.write(risk_level)
+            st.write(url_findings)
+            st.write(threats)
         
             for threat in threats:
                 st.warning(threat)
