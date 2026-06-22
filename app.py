@@ -58,30 +58,45 @@ if st.button("Detect Email"):
             outputs = model(**inputs)
 
         prediction = torch.argmax(outputs.logits, dim=1).item()
-
         probabilities = torch.softmax(outputs.logits, dim=1)
         confidence = torch.max(probabilities).item() * 100
-        if confidence >= 90:
-            risk_level = "High"
-        elif confidence >= 70:
-            risk_level = "Medium"
+        
+        # URL Analysis
+        url_findings = analyze_urls(email_text)
+        
+        # Risk Score
+        if prediction == 1:
+            risk_score = confidence
+            risk_score += len(url_findings) * 5
+            risk_score = min(risk_score, 100)
         else:
+            risk_score = max(0, 20 - len(url_findings) * 5)
+        
+        # Risk Level
+        if risk_score >= 90:
+            risk_level = "High"
+        elif risk_score >= 70:
+            risk_level = "Medium"
+        elif risk_score >= 40:
             risk_level = "Low"
+        else:
+            risk_level = "Safe"
 
+        
         st.subheader("Prediction Result")
 
         if prediction == 1:
-            st.error(
-            f"⚠️ Phishing Email Detected\n\n"
-            f"Confidence: {confidence:.2f}%\n\n"
-            f"Risk Level: {risk_level}"
-        )
+            st.error("⚠️ Phishing Email Detected")
+            st.write(f"**Confidence:** {confidence:.2f}%")
+            st.write(f"**Risk Score:** {risk_score:.2f}/100")
+            st.write(f"**Risk Level:** {risk_level}")
         else:
             st.success(
             f"✅ Legitimate Email\n\n"
-            f"Confidence: {confidence:.2f}%\n\n"
-            f"Risk Level: {risk_level}")
-        url_findings = analyze_urls(email_text)
+            st.success("✅ Legitimate Email")
+            st.write(f"**Confidence:** {confidence:.2f}%")
+            st.write(f"**Risk Score:** {risk_score:.2f}/100")
+            st.write(f"**Risk Level:** {risk_level}")
         if url_findings:
             st.subheader("🔍 URL Analysis")
             for finding in url_findings:
