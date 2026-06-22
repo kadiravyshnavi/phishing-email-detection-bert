@@ -2,6 +2,7 @@ import streamlit as st
 import torch
 from transformers import BertTokenizer, BertForSequenceClassification
 from url_analyzer import analyze_urls
+from threat_analyzer import analyze_threats
 
 # Page configuration
 st.set_page_config(
@@ -81,18 +82,19 @@ if st.button("Detect Email"):
             risk_level = "Low"
         else:
             risk_level = "Safe"
-
+        threats = analyze_threats(email_text)
+        if threats:
+            st.subheader("🚨 Threat Analysis")
         
+            for threat in threats:
+                st.warning(threat)
         st.subheader("Prediction Result")
-
         if prediction == 1:
             st.error("⚠️ Phishing Email Detected")
             st.write(f"**Confidence:** {confidence:.2f}%")
             st.write(f"**Risk Score:** {risk_score:.2f}/100")
             st.write(f"**Risk Level:** {risk_level}")
         else:
-            st.success(
-            f"✅ Legitimate Email\n\n"
             st.success("✅ Legitimate Email")
             st.write(f"**Confidence:** {confidence:.2f}%")
             st.write(f"**Risk Score:** {risk_score:.2f}/100")
