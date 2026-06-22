@@ -60,17 +60,27 @@ if st.button("Detect Email"):
 
         probabilities = torch.softmax(outputs.logits, dim=1)
         confidence = torch.max(probabilities).item() * 100
+        if confidence >= 90:
+            risk_level = "High"
+        elif confidence >= 70:
+            risk_level = "Medium"
+        else:
+            risk_level = "Low"
 
         st.subheader("Prediction Result")
 
         if prediction == 1:
             st.error(
-                f"⚠️ Phishing Email Detected\n\nConfidence: {confidence:.2f}%"
-            )
+            f"⚠️ Phishing Email Detected\n\n"
+            f"Confidence: {confidence:.2f}%\n\n"
+            f"Risk Level: {risk_level}"
+        )
         else:
             st.success(
-                f"✅ Legitimate Email\n\nConfidence: {confidence:.2f}%"
-            )
+            f"✅ Legitimate Email\n\n"
+            f"Confidence: {confidence:.2f}%\n\n"
+            f"Risk Level: {risk_level}"
+)
 
 # Footer
 st.markdown("---")
